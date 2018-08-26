@@ -15,6 +15,10 @@ class Header extends Component {
         <Subscribe to={[DataContainer]}>
           {({ setLongAsCurrent, setShortAsCurrent, syncToStorage }) => (
             <Menu mode="horizontal">
+              <Item key="trash" onClick={this.props.showModal}>
+                <Icon type="delete" />
+                Trash Bin
+              </Item>
               <Item key="save" onClick={syncToStorage} style={{ float: 'right' }}>
                 <Icon type="save" />
                 Persist data

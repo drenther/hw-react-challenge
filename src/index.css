@@ -70,3 +70,14 @@ section {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.trash-bin {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.trash-items {
+  margin: 5px;
+  width: 225px;
+  height: 100%;
+}

@@ -27,6 +27,7 @@ class DataContainer extends Container {
       subtree: null,
       selected: null,
       trail: [],
+      trash: [],
       draggingKey: null,
     };
   }
@@ -63,9 +64,13 @@ class DataContainer extends Container {
       const tree = new TreeModel();
       const root = tree.parse(prevState.data);
       const res = root.first(node => node.model.key === key);
-      res.drop();
+      const trail = res.getPath();
+      const parent = trail[trail.length - 2 > 0 ? trail.length - 2 : 0];
+      console.log(parent);
+      const deleted = res.drop();
       message.success('Deleted');
-      return { data: Object.assign({}, root.model), subtree: null, trail: [] };
+      const trash = [...prevState.trash, { node: deleted.model, parent: parent.model }];
+      return { data: Object.assign({}, root.model), subtree: null, trail: [], trash };
     });
   };
 
@@ -115,6 +120,38 @@ class DataContainer extends Container {
       resDrop.addChild(newNode);
       return { data: Object.assign({}, root.model), subtree: null, trail: [] };
     });
+  };
+
+  removeFromTrash = index => {
+    this.setState(prevState => {
+      const trash = [...prevState.trash.slice(0, index), ...prevState.trash.slice(index + 1)];
+      return { trash };
+    });
+  };
+
+  restoreNode = index => {
+    this.setState(prevState => {
+      const item = prevState.trash[index];
+      const node = item.node;
+      const parent = item.parent;
+
+      const tree = new TreeModel();
+      const root = tree.parse(prevState.data);
+
+      const res = root.first(node => node.model.key === parent.key);
+      if (!res) {
+        message.error('Parent missing! Can not be restored.');
+        return null;
+      }
+      const newNode = tree.parse(node);
+      res.addChild(newNode);
+      const trash = [...prevState.trash.slice(0, index), ...prevState.trash.slice(index + 1)];
+      return { data: Object.assign({}, root.model), subtree: null, trail: [], trash };
+    });
+  };
+
+  emptyTrash = () => {
+    this.setState({ trash: [] });
   };
 }
 
