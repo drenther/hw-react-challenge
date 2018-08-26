@@ -27,6 +27,7 @@ class DataContainer extends Container {
       subtree: null,
       selected: null,
       trail: [],
+      draggingKey: null,
     };
   }
 
@@ -93,6 +94,26 @@ class DataContainer extends Container {
       res.addChild(newNode);
       message.success('Added');
       return { data: Object.assign({}, root.model) };
+    });
+  };
+
+  dropNode = ({ dragNode, node }) => {
+    this.setState(prevState => {
+      const dragged = dragNode.props;
+      const dropped = node.props;
+      if (dropped.title.includes('.')) {
+        message.error('Files cannot contain other files.');
+        return null;
+      }
+
+      const tree = new TreeModel();
+      const root = tree.parse(prevState.data);
+      const resDrag = root.first(node => node.model.key === dragged.eventKey);
+      const resDrop = root.first(node => node.model.key === dropped.eventKey);
+      const newNode = tree.parse(resDrag.model);
+      resDrag.drop();
+      resDrop.addChild(newNode);
+      return { data: Object.assign({}, root.model), subtree: null, trail: [] };
     });
   };
 }

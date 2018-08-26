@@ -24,11 +24,11 @@ class FileTree extends Component {
     return (
       <div className="file-tree">
         <Subscribe to={[DataContainer]}>
-          {({ state: { data }, selectSubtree }) => {
+          {({ state: { data }, selectSubtree, dropNode }) => {
             const JSX = recursiveRender(data);
 
             return (
-              <DirectoryTree draggable showIcon onSelect={selectSubtree}>
+              <DirectoryTree draggable showIcon onSelect={selectSubtree} onDrop={dropNode}>
                 {JSX}
               </DirectoryTree>
             );

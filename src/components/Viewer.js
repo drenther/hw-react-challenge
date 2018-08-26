@@ -21,6 +21,8 @@ class Viewer extends Component {
                 <div className="msg">
                   <Alert
                     message={subtree.name}
+                    iconType="file"
+                    showIcon
                     description={`This is a ${subtree.name.split('.').pop()} file`}
                     type="warning"
                   />
